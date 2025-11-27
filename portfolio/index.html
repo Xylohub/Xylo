@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Xylo | Portfolio</title>
+
+    <!-- Optional: load Poppins for a pro look -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#home">
+          <!-- data-light = file to use on light theme (black logo)
+             data-dark  = file to use on dark theme (colored/neon logo)
+             fallback src will be used if those files aren't present -->
+          <img
+            id="site-logo"
+            src="logo.png"
+            alt="Xylo logo"
+            data-light="logo.jpg"
+            data-dark="logo.png"
+          />
+          <h1 class="brand-title">Xylo Hub</h1>
+        </a>
+
+        <!-- desktop nav -->
+        <nav class="nav-desktop" aria-label="Main navigation">
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <!-- theme toggle & hamburger (mobile) -->
+        <div class="controls">
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            aria-pressed="false"
+            aria-label="Toggle theme"
+          >
+            <span class="sun">☀️</span>
+            <span class="moon">🌙</span>
+            <span class="toggle-knob" aria-hidden="true"></span>
+          </button>
+
+          <button
+            id="hamburger"
+            class="hamburger"
+            aria-label="Open menu"
+            aria-expanded="false"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- mobile nav panel -->
+      <nav id="mobile-nav" class="nav-mobile" aria-hidden="true">
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero / Intro -->
+      <section class="intro" id="home">
+        <figure class="logo-figure">
+          <img
+            id="hero-logo"
+            src="logo.png"
+            alt="Xylo logo"
+            data-light="logo.png"
+            data-dark="logo.png"
+          />
+        </figure>
+
+        <div class="intro-content">
+          <h2 class="welcome">WELCOME TO XYLO</h2>
+          <p class="lead">
+            I am the mind behind Xylo.<br />
+            I build clean, creative and user-focused websites, portfolios &
+            tools to help brands shine online. I also build SaaS and AI
+            projects.
+          </p>
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section class="projects" id="projects">
+        <div class="container">
+          <h2 class="section-title">Projects</h2>
+
+          <div class="cards">
+            <article class="project-card">
+              <h3>A Business Website</h3>
+              <p>A modern website built with HTML, CSS and love.</p>
+              <a
+                class="btn"
+                href="https://xylohub.github.io/Your-option/"
+                target="_blank"
+                rel="noopener"
+                >Visit Project</a
+              >
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact -->
+      <section class="contact" id="contact">
+        <div class="container narrow">
+          <h2 class="section-title">Contact & Book Me</h2>
+          <p class="lead">
+            Have a project in mind? Let's bring your vision to life. Fill out
+            the form below and I’ll get back to you ASAP.
+          </p>
+
+          <form
+            action="mailto:xylohub6@gmail.com"
+            method="POST"
+            enctype="text/plain"
+            class="contact-form"
+          >
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              required
+            />
+            <textarea
+              name="message"
+              rows="6"
+              placeholder="Tell me about your project..."
+              required
+            ></textarea>
+            <button type="submit" class="btn submit">Send Message</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container narrow">
+        <p>© 2025 Xylo Hub. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Tiny JavaScript: theme toggling, logo swap, hamburger -->
+    <script>
+      (function () {
+        const doc = document.documentElement;
+        const toggle = document.getElementById("theme-toggle");
+        const hamburger = document.getElementById("hamburger");
+        const mobileNav = document.getElementById("mobile-nav");
+        const logo = document.getElementById("site-logo");
+        const heroLogo = document.getElementById("hero-logo");
+        const LOGO_ELEMENTS = [logo, heroLogo].filter(Boolean);
+
+        // read saved theme or system preference
+        const saved = localStorage.getItem("xylo-theme");
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const initial = saved || (prefersDark ? "dark" : "light");
+
+        const setTheme = (theme, save = true) => {
+          if (theme === "dark") {
+            doc.classList.add("theme-dark");
+            doc.classList.remove("theme-light");
+            toggle.setAttribute("aria-pressed", "true");
+          } else {
+            doc.classList.add("theme-light");
+            doc.classList.remove("theme-dark");
+            toggle.setAttribute("aria-pressed", "false");
+          }
+          // swap logos if data-* present
+          LOGO_ELEMENTS.forEach((img) => {
+            const src = theme === "dark" ? img.dataset.dark : img.dataset.light;
+            if (src) {
+              // quick check: try to load the theme-specific image first (non-blocking)
+              const test = new Image();
+              test.onload = () => (img.src = src);
+              test.onerror = () => {
+                /* keep current img.src (fallback) */
+              };
+              test.src = src;
+            }
+          });
+          if (save) localStorage.setItem("xylo-theme", theme);
+        };
+
+        // initialize
+        setTheme(initial, false);
+
+        // toggle handler
+        toggle.addEventListener("click", () => {
+          const isDark = doc.classList.contains("theme-dark");
+          setTheme(isDark ? "light" : "dark");
+        });
+
+        // hamburger handler
+        hamburger.addEventListener("click", () => {
+          const expanded = hamburger.getAttribute("aria-expanded") === "true";
+          hamburger.setAttribute("aria-expanded", String(!expanded));
+          mobileNav.setAttribute("aria-hidden", String(expanded));
+          mobileNav.classList.toggle("open");
+          hamburger.classList.toggle("is-open");
+        });
+
+        // close mobile nav on link click
+        mobileNav.addEventListener("click", (e) => {
+          if (e.target.tagName === "A") {
+            hamburger.setAttribute("aria-expanded", "false");
+            mobileNav.setAttribute("aria-hidden", "true");
+            mobileNav.classList.remove("open");
+            hamburger.classList.remove("is-open");
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
